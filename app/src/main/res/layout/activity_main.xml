@@ -19,6 +19,7 @@
         android:layout_centerHorizontal="true"
         android:textSize="30dp"
         android:textStyle="bold"
+        android:layout_marginTop="50dp"
         />
 
     <ImageView
@@ -30,7 +31,11 @@
         android:layout_centerHorizontal="true"
 
         android:scaleType="fitXY"
-        android:layout_margin="20dp"
+
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
         />
 
     <EditText
