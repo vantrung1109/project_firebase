@@ -27,13 +27,19 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
 }
 
 dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    
+    implementation("com.google.firebase:firebase-storage")
+    implementation("com.squareup.picasso:picasso:2.71828")
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
