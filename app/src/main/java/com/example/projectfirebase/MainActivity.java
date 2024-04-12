@@ -1,5 +1,6 @@
 package com.example.projectfirebase;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
