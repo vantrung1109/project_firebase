@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     ImageAdapter adapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,44 +95,5 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         Log.e("URLS", urls.toString());
-
-//        binding.getImage.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v){
-//                progressDialog = new ProgressDialog(MainActivity.this);
-//                progressDialog.setMessage("Fetching image...");
-//                progressDialog.setCancelable(false);
-//                progressDialog.show();
-//
-//                String imageID = binding.editImage.getText().toString();
-//
-//                storageReference = FirebaseStorage.getInstance().getReference("images/" + imageID+".jpg");
-
-
-
-//                try {
-//                    File localFile = File.createTempFile("tempfile", "jpg");
-//                    storageReference.getFile(localFile)
-//                            .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-//                                @Override
-//                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-//                                    if(progressDialog.isShowing())
-//                                        progressDialog.dismiss();
-//                                    Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-//                                    binding.imageView.setImageBitmap(bitmap);
-//                                }
-//                            }).addOnFailureListener(new OnFailureListener(){
-//                                @Override
-//                                public void onFailure (@androidx.annotation.NonNull Exception e) {
-//                                    if(progressDialog.isShowing())
-//                                        progressDialog.dismiss();
-//                                    Toast.makeText(MainActivity.this, "Failed to fetch image", Toast.LENGTH_SHORT).show();
-//                                }
-//                            });
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
     }
 }
