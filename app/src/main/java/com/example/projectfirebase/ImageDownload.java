@@ -2,17 +2,17 @@ package com.example.projectfirebase;
 
 
 public class ImageDownload {
-    int resource;
+    String resource;
 
-    public ImageDownload(int resource) {
+    public ImageDownload(String resource) {
         this.resource = resource;
     }
 
-    public int getResource() {
+    public String getResource() {
         return resource;
     }
 
-    public void setResource(int resource) {
+    public void setResource(String resource) {
         this.resource = resource;
     }
 }

@@ -13,6 +13,7 @@ import com.example.projectfirebase.databinding.FragmentLibraryBinding;
 public class LibraryFragment extends Fragment {
     FragmentLibraryBinding mFragmentLibraryBinding;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

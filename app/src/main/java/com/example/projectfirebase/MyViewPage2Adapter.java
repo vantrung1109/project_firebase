@@ -6,8 +6,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 
-public class MyViewPage2rAdapter extends FragmentStateAdapter {
-    public MyViewPage2rAdapter(@NonNull FragmentActivity fragmentActivity) {
+public class MyViewPage2Adapter extends FragmentStateAdapter {
+    public MyViewPage2Adapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
     }
 

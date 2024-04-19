@@ -18,7 +18,7 @@ public class UploadFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mFragmentUploadBinding = FragmentUploadBinding.inflate(inflater, container, false);
-        // Inflate the layout for this fragment
+
         return mFragmentUploadBinding.getRoot();
     }
 }

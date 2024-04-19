@@ -15,9 +15,9 @@ import java.util.List;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHolder> {
     private Context mContext;
-    private List<String> mImageUrls;
+    private List<ImageDownload> mImageUrls;
 
-    public ImageAdapter(Context context, List<String> imageUrls) {
+    public ImageAdapter(Context context, List<ImageDownload> imageUrls) {
         mContext = context;
         mImageUrls = imageUrls;
     }
@@ -32,7 +32,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
         String imageUrl = mImageUrls.get(position);
-        Picasso.get().load(imageUrl).into(holder.imageView);
+        
     }
 
     @Override
