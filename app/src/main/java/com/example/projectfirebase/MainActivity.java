@@ -3,10 +3,11 @@ package com.example.projectfirebase;
 import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+
 import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -18,6 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +38,10 @@ public class MainActivity extends AppCompatActivity {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference().child("images");
 
-        List<ImageDownload> listImageDownload = new ArrayList<>();
+        List<ImageDownload> listImageDownloads = new ArrayList<>();
 
 
-        List<String> urls = new ArrayList<>();
+
         storageRef.listAll()
                 .addOnSuccessListener(new OnSuccessListener<ListResult>() {
                     @Override
@@ -51,7 +53,8 @@ public class MainActivity extends AppCompatActivity {
                                 public void onSuccess(Uri uri) {
                                     // uri chứa đường dẫn đến tệp tin ảnh
                                     String imageUrl = uri.toString();
-
+                                    ImageDownload img = new ImageDownload(imageUrl);
+                                    listImageDownloads.add(img);
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                             }).addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    adapter = new ImageAdapter(MainActivity.this,urls);
+                                    adapter = new ImageAdapter(MainActivity.this,listImageDownloads);
                                 }
                             });
                         }
@@ -74,8 +77,5 @@ public class MainActivity extends AppCompatActivity {
                         // Xử lý khi không thể lấy được danh sách tệp tin
                     }
                 });
-
-        Log.e("URLS", urls.toString());
-
     }
 }

@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
+
 
 import java.util.List;
 
@@ -31,8 +31,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
 
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
-        String imageUrl = mImageUrls.get(position);
-        
+        //String imageUrl = mImageUrls.get(position);
     }
 
     @Override
