@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".UploadImage">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/selectImages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Select Images" />
+
+    <TextView
+        android:id="@+id/selectedTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/selectImages"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="4sp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/uploadImages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/selectedTv"
+        android:layout_centerHorizontal="true"
+        android:text="Upload Images"
+        android:enabled="false" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/uploadImages"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp">
+
+        <ProgressBar
+            android:id="@+id/uploadProgressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/progressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/uploadProgressBar"
+            android:layout_alignTop="@id/uploadProgressBar"
+            android:layout_marginEnd="200dp"
+            android:text=""
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
