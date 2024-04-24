@@ -8,17 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-<<<<<<< HEAD
                   <option name="appId" value="com.example.firebaseapp" />
                   <option name="mobileSdkAppId" value="1:778243200291:android:dae1d3d70c05fd1b4fa896" />
                   <option name="projectId" value="projectfirebase1-9c1a0" />
                   <option name="projectNumber" value="778243200291" />
-=======
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
->>>>>>> origin/hoai
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
