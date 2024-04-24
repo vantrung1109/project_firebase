@@ -5,11 +5,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -125,15 +127,16 @@ public class UploadImage extends AppCompatActivity {
 
             TextView sizeText = new TextView(this);
             LinearLayout.LayoutParams sizeTextParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            sizeTextParams.gravity = Gravity.LEFT; // Center the text horizontally
+            sizeTextParams.gravity = Gravity.LEFT; // Align text to left
             sizeText.setLayoutParams(sizeTextParams);
             sizeText.setText("0B / 0B");
             sizeTextParams.leftMargin = dpToPx(10);
             progressTextLayout.addView(sizeText);
+
             // TextView to display progress percentage
             TextView progressText = new TextView(this);
             LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            textParams.gravity = Gravity.LEFT; // Center the text horizontally
+            textParams.gravity = Gravity.LEFT; // Align text to left
             progressText.setLayoutParams(textParams);
             progressText.setText("0%");
             textParams.leftMargin = dpToPx(10);
@@ -141,13 +144,17 @@ public class UploadImage extends AppCompatActivity {
 
             imageLayout.addView(progressTextLayout);
 
-            // Pause/Continue button
-            MaterialButton pauseButton = new MaterialButton(this);
+            // ImageButton for Pause
+            ImageButton pauseImageButton = new ImageButton(this);
             LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            pauseButton.setLayoutParams(buttonParams);
-            pauseButton.setText("Pause");
+            pauseImageButton.setLayoutParams(buttonParams);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dpToPx(40), dpToPx(40));
+            pauseImageButton.setLayoutParams(params);
+            pauseImageButton.setBackgroundColor(Color.WHITE);
+            pauseImageButton.setImageResource(R.drawable.pause);
+            pauseImageButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);// Set image resource for Pause button
             buttonParams.setMargins(dpToPx(10), 0, dpToPx(10), 0); // Set margins for the button
-            imageLayout.addView(pauseButton);
+            imageLayout.addView(pauseImageButton);
 
             progressLayout.addView(imageLayout); // Add the imageLayout to the parent layout
 
@@ -157,14 +164,18 @@ public class UploadImage extends AppCompatActivity {
 
             final int finalI = i; // Need to make the variable final to access inside the listener
 
-            // Add click listener for pause button
-            pauseButton.setOnClickListener(view -> {
-                if (pauseButton.getText().equals("Pause")) {
+            // Add click listener for Pause ImageButton
+            pauseImageButton.setOnClickListener(view -> {
+                if (pauseImageButton.getTag() == null || pauseImageButton.getTag().equals("pause")) {
+                    // Handle pause functionality
                     uploadTask.pause(); // Pause the upload task
-                    pauseButton.setText("Continue");
+                    pauseImageButton.setImageResource(R.drawable.continute); // Change image resource to Continue icon
+                    pauseImageButton.setTag("continue"); // Set tag to indicate the button state is Continue
                 } else {
+                    // Handle continue functionality
                     uploadTask.resume(); // Continue the upload task
-                    pauseButton.setText("Pause");
+                    pauseImageButton.setImageResource(R.drawable.pause); // Change image resource to Pause icon
+                    pauseImageButton.setTag("pause"); // Set tag to indicate the button state is Pause
                 }
             });
 
@@ -178,8 +189,8 @@ public class UploadImage extends AppCompatActivity {
             }).addOnSuccessListener(taskSnapshot -> {
                 // Handle success event if needed
                 Toast.makeText(this, "Image " + (finalI + 1) + " uploaded successfully!", Toast.LENGTH_SHORT).show();
-                // Change the text of the pauseButton to "Done"
-                pauseButton.setText("Done");
+                // Change the image resource of the pauseImageButton to "Done"
+                pauseImageButton.setImageResource(R.drawable.done);
                 if (finalI == imageUriList.size() - 1) { // If it's the last image
                     upload.setText("Upload Images");
                     upload.setEnabled(true);
@@ -194,6 +205,7 @@ public class UploadImage extends AppCompatActivity {
             });
         }
     }
+
 
 
     private String formatSize(long bytes) {
