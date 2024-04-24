@@ -1,15 +1,19 @@
 package com.example.firebaseapp;
 
+
 import android.app.Dialog;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +31,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
+
 
 import java.util.ArrayList;
 
@@ -58,7 +63,6 @@ public class ImageFragment extends Fragment {
             @Override
             public void onClick(Image image) {
                 showZoomedImage(image.getUrl());
-                // Handle item click here
             }
         });
         recyclerView.setAdapter(adapter);
@@ -93,7 +97,6 @@ public class ImageFragment extends Fragment {
         // Hiển thị Dialog
         zoomDialog.show();
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -130,6 +133,7 @@ public class ImageFragment extends Fragment {
             }
         });
     }
+
     private void deleteImageFromFirebase(String imageUrl) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
 
@@ -160,6 +164,4 @@ public class ImageFragment extends Fragment {
             }
         });
     }
-
-
 }
