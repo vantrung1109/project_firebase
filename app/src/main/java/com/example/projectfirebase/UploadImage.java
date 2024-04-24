@@ -1,52 +1,40 @@
 package com.example.projectfirebase;
-
-import androidx.appcompat.app.AppCompatActivity;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.UUID;
+
 public class UploadImage extends AppCompatActivity {
     private ArrayList<Uri> arrayList;
-    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult o) {
-            if (o.getResultCode() == RESULT_OK) {
-                arrayList.clear();
-                if (o.getData() != null && o.getData().getClipData() != null) {
-                    int count = o.getData().getClipData().getItemCount();
-                    for (int i = 0; i < count; i++) {
-                        Uri imageUri = o.getData().getClipData().getItemAt(i).getUri();
-                        arrayList.add(imageUri);
-                    }
-                    if (arrayList.size() >= 1) {
-                        upload.setEnabled(true);
-                        textView.setText(MessageFormat.format("{0} Images selected.", arrayList.size()));
-                    }
-                }
-            }
+    private TextView textView;
+    private MaterialButton select, upload;
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
+        if (o.getResultCode() == RESULT_OK) {
+            handleResult(o.getData());
         }
     });
-    TextView textView;
-    MaterialButton select, upload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,44 +49,147 @@ public class UploadImage extends AppCompatActivity {
         upload = findViewById(R.id.uploadImages);
         textView = findViewById(R.id.selectedTv);
 
-        select.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                activityResultLauncher.launch(intent);
-            }
+        select.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            activityResultLauncher.launch(intent);
         });
 
-        upload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                upload.setText("Uploading images...");
-                upload.setEnabled(false);
-                uploadImages(new ArrayList<>(), arrayList);
-            }
+        upload.setOnClickListener(view -> {
+            upload.setText("Uploading images...");
+            upload.setEnabled(false);
+            uploadImages(arrayList);
         });
     }
 
-    private void uploadImages(@NonNull ArrayList<String> imagesUrl, ArrayList<Uri> imageUriList) {
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference("images").child(UUID.randomUUID().toString());
-        Uri uri = imageUriList.get(imagesUrl.size());
-        storageReference.putFile(uri).addOnSuccessListener(taskSnapshot -> storageReference.getDownloadUrl().addOnCompleteListener(task -> {
-            String url = Objects.requireNonNull(task.getResult()).toString();
-            imagesUrl.add(url);
-
-            if(imagesUrl.size() == imageUriList.size()){
-                //Uploaded images url is stored in imagesUrl ArrayList.
-                Toast.makeText(this, "Images uploaded successfully!", Toast.LENGTH_SHORT).show();
-                upload.setText("Upload images");
-                upload.setEnabled(true);
+    private void handleResult(Intent data) {
+        arrayList.clear();
+        if (data != null) {
+            Uri imageUri = data.getData();
+            if (imageUri != null) {
+                // Single image selection
+                arrayList.add(imageUri);
             } else {
-                uploadImages(imagesUrl, arrayList);
+                // Multiple image selection
+                if (data.getClipData() != null) {
+                    int count = data.getClipData().getItemCount();
+                    for (int i = 0; i < count; i++) {
+                        Uri uri = data.getClipData().getItemAt(i).getUri();
+                        arrayList.add(uri);
+                    }
+                }
             }
-        })).addOnFailureListener(e -> {
-            Toast.makeText(this, "Failed to upload images", Toast.LENGTH_SHORT).show();
-        });
+            if (!arrayList.isEmpty()) {
+                upload.setEnabled(true);
+                textView.setText(MessageFormat.format("{0} Images selected.", arrayList.size()));
+            }
+        }
     }
+
+    private void uploadImages(@NonNull ArrayList<Uri> imageUriList) {
+        LinearLayout progressLayout = findViewById(R.id.progressLayout);
+        for (int i = 0; i < imageUriList.size(); i++) {
+            Uri uri = imageUriList.get(i);
+            // Create a new layout for each image (Image + ProgressBar + Pause/Continue button)
+            LinearLayout imageLayout = new LinearLayout(this);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(0, dpToPx(10), 0, 0); // Add top margin to separate progress layouts
+            imageLayout.setLayoutParams(layoutParams);
+            imageLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+            // ImageView for the image
+            ImageView imageView = new ImageView(this);
+            LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(dpToPx(60), dpToPx(60)); // Convert dp to pixels
+            imageView.setLayoutParams(imageParams);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP); // Scale type to maintain aspect ratio
+            imageView.setImageURI(uri); // Set the image to be uploaded
+            imageLayout.addView(imageView);
+
+            // ProgressBar
+            ProgressBar progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+            LinearLayout.LayoutParams progressBarParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+            progressBar.setLayoutParams(progressBarParams);
+            progressBar.setMax(100);
+            progressBar.setProgress(0);
+            progressBarParams.setMargins(dpToPx(10), 0, dpToPx(10), 0); // Set margins for the ProgressBar
+            imageLayout.addView(progressBar);
+
+            // TextView to display progress percentage
+            TextView progressText = new TextView(this);
+            LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            progressText.setLayoutParams(textParams);
+            progressText.setText("0%");
+            imageLayout.addView(progressText);
+
+            // Pause/Continue button
+            MaterialButton pauseButton = new MaterialButton(this);
+            LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            pauseButton.setLayoutParams(buttonParams);
+            pauseButton.setText("Pause");
+            buttonParams.setMargins(dpToPx(10), 0, dpToPx(10), 0); // Set margins for the button
+            imageLayout.addView(pauseButton);
+
+            progressLayout.addView(imageLayout); // Add the imageLayout to the parent layout
+
+            // Upload each image
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference("images").child(UUID.randomUUID().toString());
+            UploadTask uploadTask = storageReference.putFile(uri);
+
+            final int finalI = i; // Need to make the variable final to access inside the listener
+
+            // Add click listener for pause button
+            pauseButton.setOnClickListener(view -> {
+                if (pauseButton.getText().equals("Pause")) {
+                    uploadTask.pause(); // Pause the upload task
+                    pauseButton.setText("Continue");
+                } else {
+                    uploadTask.resume(); // Continue the upload task
+                    pauseButton.setText("Pause");
+                }
+            });
+
+            // Add progress listener for each upload task
+            uploadTask.addOnProgressListener(taskSnapshot -> {
+                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                progressBar.setProgress((int) progress);
+                progressText.setText((int) progress + "%"); // Update progress text
+            }).addOnSuccessListener(taskSnapshot -> {
+                // Handle success event if needed
+                Toast.makeText(this, "Image " + (finalI + 1) + " uploaded successfully!", Toast.LENGTH_SHORT).show();
+                // Change the text of the pauseButton to "Done"
+                pauseButton.setText("Done");
+                if (finalI == imageUriList.size() - 1) { // If it's the last image
+                    upload.setText("Upload Images");
+                    upload.setEnabled(true);
+                }
+            }).addOnFailureListener(e -> {
+                // Handle failure event if needed
+                Toast.makeText(this, "Failed to upload image " + (finalI + 1), Toast.LENGTH_SHORT).show();
+                if (finalI == imageUriList.size() - 1) { // If it's the last image
+                    upload.setText("Upload Images");
+                    upload.setEnabled(true);
+                }
+            });
+        }
+    }
+
+    private String formatSize(long bytes) {
+        String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
+        int unitIndex = 0;
+        double size = bytes;
+        while (size >= 1024 && unitIndex < units.length - 1) {
+            size /= 1024;
+            unitIndex++;
+        }
+        return String.format("%.2f", size) + units[unitIndex];
+    }
+
+    // Helper method to convert dp to pixels
+    private int dpToPx(int dp) {
+        float density = getResources().getDisplayMetrics().density;
+        return Math.round((float) dp * density);
+    }
+
 }
