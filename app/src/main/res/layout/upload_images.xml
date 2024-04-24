@@ -4,35 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".UploadImage"
     >
-
-    <com.google.android.material.button.MaterialButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:id="@+id/selectImages"
-        android:text="Select Images"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/selectedTv"
-        android:layout_below="@id/selectImages"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="4sp"/>
-
-    <com.google.android.material.button.MaterialButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/selectedTv"
-        android:layout_centerHorizontal="true"
-        android:text="Upload Images"
-        android:enabled="false"
-        android:id="@+id/uploadImages"/>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/uploadImages"
         android:layout_marginTop="8dp">
 
         <LinearLayout
@@ -44,4 +18,35 @@
             <!-- Add progress bar layouts dynamically here -->
         </LinearLayout>
     </ScrollView>
+    <LinearLayout
+        android:id="@+id/bottomButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/selectImages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Images"
+            android:layout_weight="1"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selectedTv"
+            android:layout_below="@id/selectImages"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="4sp"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/uploadImages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Upload Images"
+            android:enabled="false"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+
 </RelativeLayout>

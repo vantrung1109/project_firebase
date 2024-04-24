@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -107,21 +108,38 @@ public class UploadImage extends AppCompatActivity {
             imageView.setImageURI(uri); // Set the image to be uploaded
             imageLayout.addView(imageView);
 
+            // LinearLayout to contain ProgressBar and TextView
+            LinearLayout progressTextLayout = new LinearLayout(this);
+            LinearLayout.LayoutParams progressTextLayoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+            progressTextLayout.setLayoutParams(progressTextLayoutParams);
+            progressTextLayout.setOrientation(LinearLayout.VERTICAL);
+
             // ProgressBar
             ProgressBar progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
-            LinearLayout.LayoutParams progressBarParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+            LinearLayout.LayoutParams progressBarParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             progressBar.setLayoutParams(progressBarParams);
             progressBar.setMax(100);
             progressBar.setProgress(0);
             progressBarParams.setMargins(dpToPx(10), 0, dpToPx(10), 0); // Set margins for the ProgressBar
-            imageLayout.addView(progressBar);
+            progressTextLayout.addView(progressBar);
 
+            TextView sizeText = new TextView(this);
+            LinearLayout.LayoutParams sizeTextParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            sizeTextParams.gravity = Gravity.LEFT; // Center the text horizontally
+            sizeText.setLayoutParams(sizeTextParams);
+            sizeText.setText("0B / 0B");
+            sizeTextParams.leftMargin = dpToPx(10);
+            progressTextLayout.addView(sizeText);
             // TextView to display progress percentage
             TextView progressText = new TextView(this);
             LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            textParams.gravity = Gravity.LEFT; // Center the text horizontally
             progressText.setLayoutParams(textParams);
             progressText.setText("0%");
-            imageLayout.addView(progressText);
+            textParams.leftMargin = dpToPx(10);
+            progressTextLayout.addView(progressText);
+
+            imageLayout.addView(progressTextLayout);
 
             // Pause/Continue button
             MaterialButton pauseButton = new MaterialButton(this);
@@ -155,6 +173,8 @@ public class UploadImage extends AppCompatActivity {
                 double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
                 progressBar.setProgress((int) progress);
                 progressText.setText((int) progress + "%"); // Update progress text
+                String uploadedSize = formatSize(taskSnapshot.getBytesTransferred()) + " / " + formatSize(taskSnapshot.getTotalByteCount());
+                sizeText.setText(uploadedSize);
             }).addOnSuccessListener(taskSnapshot -> {
                 // Handle success event if needed
                 Toast.makeText(this, "Image " + (finalI + 1) + " uploaded successfully!", Toast.LENGTH_SHORT).show();
@@ -174,6 +194,7 @@ public class UploadImage extends AppCompatActivity {
             });
         }
     }
+
 
     private String formatSize(long bytes) {
         String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
