@@ -41,7 +41,7 @@ public class UploadImageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.upload_images);
+        setContentView(R.layout.fragment_upload_images);
 
         FirebaseApp.initializeApp(UploadImageActivity.this);
 

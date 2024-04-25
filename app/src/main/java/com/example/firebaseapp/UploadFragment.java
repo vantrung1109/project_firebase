@@ -1,11 +1,16 @@
 package com.example.firebaseapp;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -19,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 
+import com.example.firebaseapp.databinding.FragmentUploadImagesBinding;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.storage.FirebaseStorage;
@@ -32,29 +38,27 @@ import java.util.UUID;
 public class UploadFragment extends Fragment {
 
     private ArrayList<Uri> arrayList;
-    private TextView textView;
-    private MaterialButton select, upload;
 
-    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-        if (result.getResultCode() == getActivity().RESULT_OK) {
-            handleResult(result.getData());
+    FragmentUploadImagesBinding mFragmentUploadImagesBinding;
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
+        if (o.getResultCode() == RESULT_OK) {
+            handleResult(o.getData());
         }
     });
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.upload_images, container, false);
+        mFragmentUploadImagesBinding = FragmentUploadImagesBinding.inflate(inflater, container, false);
 
         FirebaseApp.initializeApp(requireContext());
 
         arrayList = new ArrayList<>();
 
-        select = view.findViewById(R.id.selectImages);
-        upload = view.findViewById(R.id.uploadImages);
 
 
-        select.setOnClickListener(v -> {
+        mFragmentUploadImagesBinding.selectImages.setOnClickListener(view1 -> {
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -62,13 +66,14 @@ public class UploadFragment extends Fragment {
             activityResultLauncher.launch(intent);
         });
 
-        upload.setOnClickListener(v -> {
-            upload.setText("Uploading images...");
-            upload.setEnabled(false);
+        mFragmentUploadImagesBinding.uploadImages.setOnClickListener(view1 -> {
+            mFragmentUploadImagesBinding.uploadImages.setText("Uploading images...");
+            mFragmentUploadImagesBinding.uploadImages.setEnabled(false);
             uploadImages(arrayList);
         });
 
-        return view;
+
+        return mFragmentUploadImagesBinding.getRoot();
     }
 
     private void handleResult(Intent data) {
@@ -89,55 +94,77 @@ public class UploadFragment extends Fragment {
                 }
             }
             if (!arrayList.isEmpty()) {
-                upload.setEnabled(true);
-                textView.setText(MessageFormat.format("{0} Images selected.", arrayList.size()));
+                mFragmentUploadImagesBinding.uploadImages.setEnabled(true);
+                mFragmentUploadImagesBinding.selectedTv.setText(MessageFormat.format("{0} Images selected.", arrayList.size()));
             }
         }
     }
 
+
     private void uploadImages(@NonNull ArrayList<Uri> imageUriList) {
-        LinearLayout progressLayout = requireView().findViewById(R.id.progressLayout);
+        LinearLayout progressLayout = mFragmentUploadImagesBinding.progressLayout;
         for (int i = 0; i < imageUriList.size(); i++) {
             Uri uri = imageUriList.get(i);
             // Create a new layout for each image (Image + ProgressBar + Pause/Continue button)
-            LinearLayout imageLayout = new LinearLayout(requireContext());
+            LinearLayout imageLayout = new LinearLayout(getContext());
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(0, dpToPx(10), 0, 0); // Add top margin to separate progress layouts
             imageLayout.setLayoutParams(layoutParams);
             imageLayout.setOrientation(LinearLayout.HORIZONTAL);
 
             // ImageView for the image
-            // Note: You need to add an ImageView in your layout and set its ID
-            ImageView imageView = new ImageView(requireContext());
+            ImageView imageView = new ImageView(getContext());
             LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(dpToPx(60), dpToPx(60)); // Convert dp to pixels
             imageView.setLayoutParams(imageParams);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP); // Scale type to maintain aspect ratio
             imageView.setImageURI(uri); // Set the image to be uploaded
             imageLayout.addView(imageView);
 
+            // LinearLayout to contain ProgressBar and TextView
+            LinearLayout progressTextLayout = new LinearLayout(getContext());
+            LinearLayout.LayoutParams progressTextLayoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+            progressTextLayout.setLayoutParams(progressTextLayoutParams);
+            progressTextLayout.setOrientation(LinearLayout.VERTICAL);
+
             // ProgressBar
-            ProgressBar progressBar = new ProgressBar(requireContext(), null, android.R.attr.progressBarStyleHorizontal);
-            LinearLayout.LayoutParams progressBarParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+            ProgressBar progressBar = new ProgressBar(getContext(), null, android.R.attr.progressBarStyleHorizontal);
+            LinearLayout.LayoutParams progressBarParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             progressBar.setLayoutParams(progressBarParams);
             progressBar.setMax(100);
             progressBar.setProgress(0);
             progressBarParams.setMargins(dpToPx(10), 0, dpToPx(10), 0); // Set margins for the ProgressBar
-            imageLayout.addView(progressBar);
+            progressTextLayout.addView(progressBar);
+
+            TextView sizeText = new TextView(getContext());
+            LinearLayout.LayoutParams sizeTextParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            sizeTextParams.gravity = Gravity.LEFT; // Align text to left
+            sizeText.setLayoutParams(sizeTextParams);
+            sizeText.setText("0B / 0B");
+            sizeTextParams.leftMargin = dpToPx(10);
+            progressTextLayout.addView(sizeText);
 
             // TextView to display progress percentage
-            TextView progressText = new TextView(requireContext());
+            TextView progressText = new TextView(getContext());
             LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            textParams.gravity = Gravity.LEFT; // Align text to left
             progressText.setLayoutParams(textParams);
             progressText.setText("0%");
-            imageLayout.addView(progressText);
+            textParams.leftMargin = dpToPx(10);
+            progressTextLayout.addView(progressText);
 
-            // Pause/Continue button
-            MaterialButton pauseButton = new MaterialButton(requireContext());
+            imageLayout.addView(progressTextLayout);
+
+            // ImageButton for Pause
+            ImageButton pauseImageButton = new ImageButton(getContext());
             LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            pauseButton.setLayoutParams(buttonParams);
-            pauseButton.setText("Pause");
+            pauseImageButton.setLayoutParams(buttonParams);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dpToPx(40), dpToPx(40));
+            pauseImageButton.setLayoutParams(params);
+            pauseImageButton.setBackgroundColor(Color.WHITE);
+            pauseImageButton.setImageResource(R.drawable.pause);
+            pauseImageButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);// Set image resource for Pause button
             buttonParams.setMargins(dpToPx(10), 0, dpToPx(10), 0); // Set margins for the button
-            imageLayout.addView(pauseButton);
+            imageLayout.addView(pauseImageButton);
 
             progressLayout.addView(imageLayout); // Add the imageLayout to the parent layout
 
@@ -147,14 +174,18 @@ public class UploadFragment extends Fragment {
 
             final int finalI = i; // Need to make the variable final to access inside the listener
 
-            // Add click listener for pause button
-            pauseButton.setOnClickListener(view -> {
-                if (pauseButton.getText().equals("Pause")) {
+            // Add click listener for Pause ImageButton
+            pauseImageButton.setOnClickListener(view -> {
+                if (pauseImageButton.getTag() == null || pauseImageButton.getTag().equals("pause")) {
+                    // Handle pause functionality
                     uploadTask.pause(); // Pause the upload task
-                    pauseButton.setText("Continue");
+                    pauseImageButton.setImageResource(R.drawable.continute); // Change image resource to Continue icon
+                    pauseImageButton.setTag("continue"); // Set tag to indicate the button state is Continue
                 } else {
+                    // Handle continue functionality
                     uploadTask.resume(); // Continue the upload task
-                    pauseButton.setText("Pause");
+                    pauseImageButton.setImageResource(R.drawable.pause); // Change image resource to Pause icon
+                    pauseImageButton.setTag("pause"); // Set tag to indicate the button state is Pause
                 }
             });
 
@@ -163,25 +194,28 @@ public class UploadFragment extends Fragment {
                 double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
                 progressBar.setProgress((int) progress);
                 progressText.setText((int) progress + "%"); // Update progress text
+                String uploadedSize = formatSize(taskSnapshot.getBytesTransferred()) + " / " + formatSize(taskSnapshot.getTotalByteCount());
+                sizeText.setText(uploadedSize);
             }).addOnSuccessListener(taskSnapshot -> {
                 // Handle success event if needed
-                Toast.makeText(requireContext(), "Image " + (finalI + 1) + " uploaded successfully!", Toast.LENGTH_SHORT).show();
-                // Change the text of the pauseButton to "Done"
-                pauseButton.setText("Done");
+                Toast.makeText(getContext(), "Image " + (finalI + 1) + " uploaded successfully!", Toast.LENGTH_SHORT).show();
+                // Change the image resource of the pauseImageButton to "Done"
+                pauseImageButton.setImageResource(R.drawable.done);
                 if (finalI == imageUriList.size() - 1) { // If it's the last image
-                    upload.setText("Upload Images");
-                    upload.setEnabled(true);
+                    mFragmentUploadImagesBinding.uploadImages.setText("Upload Images");
+                    mFragmentUploadImagesBinding.uploadImages.setEnabled(true);
                 }
             }).addOnFailureListener(e -> {
                 // Handle failure event if needed
-                Toast.makeText(requireContext(), "Failed to upload image " + (finalI + 1), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Failed to upload image " + (finalI + 1), Toast.LENGTH_SHORT).show();
                 if (finalI == imageUriList.size() - 1) { // If it's the last image
-                    upload.setText("Upload Images");
-                    upload.setEnabled(true);
+                    mFragmentUploadImagesBinding.uploadImages.setText("Upload Images");
+                    mFragmentUploadImagesBinding.uploadImages.setEnabled(true);
                 }
             });
         }
     }
+
 
     private String formatSize(long bytes) {
         String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
