@@ -1,4 +1,4 @@
-package com.example.projectfirebase;
+package com.example.firebaseapp;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -28,7 +27,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class UploadImage extends AppCompatActivity {
+public class UploadImageActivity extends AppCompatActivity {
     private ArrayList<Uri> arrayList;
     private TextView textView;
     private MaterialButton select, upload;
@@ -44,7 +43,7 @@ public class UploadImage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.upload_images);
 
-        FirebaseApp.initializeApp(UploadImage.this);
+        FirebaseApp.initializeApp(UploadImageActivity.this);
 
         arrayList = new ArrayList<>();
 
