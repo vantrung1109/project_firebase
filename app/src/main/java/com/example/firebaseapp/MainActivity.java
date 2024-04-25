@@ -25,10 +25,8 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setAdapter(viewPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
 
-        // Đặt biểu tượng cho tab Upload
         mTabLayout.getTabAt(0).setIcon(R.drawable.ic_upload);
 
-        // Đặt biểu tượng cho tab Image
         mTabLayout.getTabAt(1).setIcon(R.drawable.ic_image1);
     }
 }

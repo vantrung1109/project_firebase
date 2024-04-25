@@ -2,12 +2,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".UploadFragment"
-    >
+    tools:context=".UploadFragment">
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="8dp">
+        android:layout_height="0dp"
+        android:layout_above="@id/bottomButtons"
+        android:layout_marginTop="8dp"
+        android:layout_alignParentTop="true">
 
         <LinearLayout
             android:id="@+id/progressLayout"
@@ -18,6 +20,7 @@
             <!-- Add progress bar layouts dynamically here -->
         </LinearLayout>
     </ScrollView>
+
     <LinearLayout
         android:id="@+id/bottomButtons"
         android:layout_width="match_parent"
@@ -31,6 +34,7 @@
             android:layout_height="wrap_content"
             android:text="Select Images"
             android:layout_weight="1"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,6 +42,7 @@
             android:layout_below="@id/selectImages"
             android:layout_centerHorizontal="true"
             android:layout_margin="4sp"/>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/uploadImages"
             android:layout_width="wrap_content"
@@ -47,6 +52,5 @@
             android:layout_weight="1"/>
 
     </LinearLayout>
-
 
 </RelativeLayout>

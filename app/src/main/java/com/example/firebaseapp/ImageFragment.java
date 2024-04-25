@@ -69,12 +69,22 @@ public class ImageFragment extends Fragment {
         return view;
     }
 
+    // Khai báo một biến để lưu trữ định danh của tác vụ tải ảnh
+    private String currentImageUrl = "";
+
     private void showZoomedImage(String imageUrl) {
         final Dialog zoomDialog = new Dialog(requireContext());
         zoomDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         zoomDialog.setContentView(R.layout.dialog_zoom_image);
         ImageView zoomImageView = zoomDialog.findViewById(R.id.zoom_image_view);
         ImageButton deleteButton = zoomDialog.findViewById(R.id.delete_button);
+
+        // Kiểm tra xem tác vụ tải ảnh trước đó có đang chạy không
+        if (!imageUrl.equals(currentImageUrl)) {
+            Glide.with(requireContext()).clear(zoomImageView);
+        }
+
+        currentImageUrl = imageUrl; // Cập nhật định danh của tác vụ tải ảnh mới
 
         // Sử dụng Glide để tải và hiển thị ảnh
         RequestOptions options = new RequestOptions()
@@ -93,6 +103,7 @@ public class ImageFragment extends Fragment {
         });
         zoomDialog.show();
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -164,6 +175,7 @@ public class ImageFragment extends Fragment {
             @Override
             public void onSuccess(Void aVoid) {
                 Toast.makeText(requireContext(), "Ảnh đã được xóa", Toast.LENGTH_SHORT).show();
+                // Xác định vị trí của ảnh cần xóa trong ArrayList
                 int position = -1;
                 for (int i = 0; i < arrayList.size(); i++) {
                     if (arrayList.get(i).getUrl().equals(imageUrl)) {
@@ -171,6 +183,7 @@ public class ImageFragment extends Fragment {
                         break;
                     }
                 }
+                // Nếu tìm thấy vị trí, xóa ảnh từ ArrayList và cập nhật RecyclerView
                 if (position != -1) {
                     arrayList.remove(position);
                     adapter.notifyItemRemoved(position);
@@ -183,4 +196,5 @@ public class ImageFragment extends Fragment {
             }
         });
     }
+
 }

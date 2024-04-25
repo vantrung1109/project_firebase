@@ -169,12 +169,11 @@ public class UploadFragment extends Fragment {
 
             final int finalI = i; // Need to make the variable final to access inside the listener
 
-            // Add click listener for Pause ImageButton
             pauseImageButton.setOnClickListener(view -> {
                 if (pauseImageButton.getTag() == null || pauseImageButton.getTag().equals("pause")) {
                     // Handle pause functionality
-                    uploadTask.pause(); // Pause the upload task
-                    pauseImageButton.setImageResource(R.drawable.continute); // Change image resource to Continue icon
+                    uploadTask.pause();
+                    pauseImageButton.setImageResource(R.drawable.continute);
                     pauseImageButton.setTag("continue"); // Set tag to indicate the button state is Continue
                 } else {
                     // Handle continue functionality
@@ -222,7 +221,7 @@ public class UploadFragment extends Fragment {
         return String.format("%.2f", size) + units[unitIndex];
     }
 
-    // Helper method to convert dp to pixels
+
     private int dpToPx(int dp) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round((float) dp * density);
