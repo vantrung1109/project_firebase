@@ -11,7 +11,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/toolbar"
         android:background="?attr/colorPrimary"
-        app:titleTextColor="?attr/colorSurface"/>
+        app:titleTextColor="?attr/colorSurface"
+        android:visibility="gone"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
@@ -20,16 +22,5 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:id="@+id/recycler"/>
 
-    <!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-    <!--        android:id="@+id/fab_upload"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginEnd="16dp"-->
-    <!--        android:layout_marginBottom="16dp"-->
-    <!--        android:clickable="true"-->
-    <!--        android:focusable="true"-->
-    <!--        android:src="@android:drawable/ic_menu_upload"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent" />-->
 
 </RelativeLayout>
