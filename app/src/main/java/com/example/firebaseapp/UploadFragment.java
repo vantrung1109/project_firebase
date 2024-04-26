@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,6 +104,7 @@ public class UploadFragment extends Fragment {
 
     private void uploadImages(@NonNull ArrayList<Uri> imageUriList) {
         LinearLayout progressLayout = mFragmentUploadImagesBinding.progressLayout;
+        long startTime = System.currentTimeMillis();
         for (int i = 0; i < imageUriList.size(); i++) {
             Uri uri = imageUriList.get(i);
             // Create a new layout for each image (Image + ProgressBar + Pause/Continue button)
@@ -213,6 +215,9 @@ public class UploadFragment extends Fragment {
                     mFragmentUploadImagesBinding.uploadImages.setEnabled(true);
                 }
             });
+            long endTime = System.currentTimeMillis();
+            long elapsedTime = endTime - startTime;
+            Log.d("TimeElapsed", "Thời gian tải là: " + elapsedTime + "ms");
         }
     }
 

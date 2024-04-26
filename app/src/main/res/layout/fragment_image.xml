@@ -29,5 +29,6 @@
         android:layout_marginBottom="7dp"
         android:clickable="true"
         android:focusable="true"
-        android:src="@drawable/ic_re" />
+        android:src="@drawable/reload"
+        android:background="@color/white"/>
 </RelativeLayout>

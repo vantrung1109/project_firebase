@@ -66,6 +66,19 @@ public class ImageFragment extends Fragment {
             }
         });
         recyclerView.setAdapter(adapter);
+
+        showProgressDialog();
+        loadImagesFromFirebase();
+        FirebaseApp.initializeApp(requireContext());
+        FloatingActionButton fabReload = view.findViewById(R.id.fab_reload);
+        fabReload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProgressDialog();
+                loadImagesFromFirebase();
+            }
+        });
+
         return view;
     }
 
@@ -92,22 +105,6 @@ public class ImageFragment extends Fragment {
             }
         });
         zoomDialog.show();
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        FirebaseApp.initializeApp(requireContext());
-
-        FloatingActionButton fabReload = view.findViewById(R.id.fab_reload);
-        fabReload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showProgressDialog();
-                loadImagesFromFirebase();
-            }
-        });
     }
 
     private void showProgressDialog() {
