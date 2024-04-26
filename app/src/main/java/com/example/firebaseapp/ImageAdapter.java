@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,12 +37,18 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         if (position == arrayList.size()) {
             return;
         }
-        if (arrayList.get(position) == null) {
-            return;
-        }
         holder.title.setText(arrayList.get(position).getName());
         Glide.with(context).load(arrayList.get(position).getUrl()).into(holder.imageView);
-        holder.itemView.setOnClickListener(view -> onItemClickListener.onClick(arrayList.get(position)));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (holder.getAdapterPosition() == arrayList.size()){
+                    Toast.makeText(context, "Pls load images again!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                onItemClickListener.onClick(arrayList.get(holder.getAdapterPosition()));
+            }
+        });
 
     }
 
