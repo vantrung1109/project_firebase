@@ -160,27 +160,36 @@ public class ImageFragment extends Fragment {
     private void deleteImageFromFirebase(String imageUrl) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
 
-        storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(requireContext(), "Ảnh đã được xóa", Toast.LENGTH_SHORT).show();
-                int position = -1;
-                for (int i = 0; i < arrayList.size(); i++) {
-                    if (arrayList.get(i).getUrl().equals(imageUrl)) {
-                        position = i;
-                        break;
+        try {
+            storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(requireContext(), "Ảnh đã được xóa", Toast.LENGTH_SHORT).show();
+                    int position = -1;
+                    for (int i = 0; i < arrayList.size(); i++) {
+                        if (arrayList.get(i).getUrl().equals(imageUrl)) {
+                            position = i;
+                            break;
+                        }
                     }
+                    if (position == arrayList.size()) {
+                        return;
+                    }
+                    if (position != -1) {
+                        arrayList.remove(position);
+                        adapter.notifyItemRemoved(position);
+                    }
+
                 }
-                if (position != -1) {
-                    arrayList.remove(position);
-                    adapter.notifyItemRemoved(position);
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Toast.makeText(requireContext(), "Lỗi: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(requireContext(), "Lỗi: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+            });
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
     }
 }
